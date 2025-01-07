@@ -9,7 +9,12 @@ requirements_bp = Blueprint("requirements_bp", __name__)
 
 CORS(
     requirements_bp,
-    origins=["http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000", "https://cogs-354de766c1e7.herokuapp.com"],
+    origins=[
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://127.0.0.1:3000",
+        "https://cogs-354de766c1e7.herokuapp.com",
+    ],
     supports_credentials=True,
 )
 
