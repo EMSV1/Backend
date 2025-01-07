@@ -11,6 +11,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 
+
 def create_app():
     """
     Factory function to create the Flask app and initialize extensions, blueprints, etc.
@@ -27,24 +28,46 @@ def create_app():
     jwt.init_app(app)
 
     # Initialize CORS (Allow specific origins for development)
-    CORS(app, origins=["http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000"], supports_credentials=True)
+    CORS(
+        app,
+        origins=[
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:3000",
+            "https://cogs-354de766c1e7.herokuapp.com",
+        ],
+        supports_credentials=True,
+    )
 
     # Register blueprints (routes)
-    from routes import  requirement, approval, interview, joining, assets, licenses, login, users
-    from requirements.auth import user_routes  # Import user_routes blueprint for role assignment
+    from routes import (
+        requirement,
+        approval,
+        interview,
+        joining,
+        assets,
+        licenses,
+        login,
+        users,
+    )
+    from requirements.auth import (
+        user_routes,
+    )  # Import user_routes blueprint for role assignment
 
     # Register the blueprints with URL prefixes
     # app.register_blueprint(employee.employee_bp, url_prefix='/employee')
-    app.register_blueprint(requirement.requirements_bp, url_prefix='/')
-    app.register_blueprint(approval.approval_bp, url_prefix='/approval')
-    app.register_blueprint(interview.interview_bp, url_prefix='/interview')
-    app.register_blueprint(joining.joining_bp, url_prefix='/')
-    app.register_blueprint(assets.assets_bp, url_prefix='/')
-    app.register_blueprint(licenses.licenses_bp, url_prefix='/')
+    app.register_blueprint(requirement.requirements_bp, url_prefix="/")
+    app.register_blueprint(approval.approval_bp, url_prefix="/approval")
+    app.register_blueprint(interview.interview_bp, url_prefix="/interview")
+    app.register_blueprint(joining.joining_bp, url_prefix="/")
+    app.register_blueprint(assets.assets_bp, url_prefix="/")
+    app.register_blueprint(licenses.licenses_bp, url_prefix="/")
 
     # Register user and login blueprints
-    app.register_blueprint(users.user_bp, url_prefix='/users')
-    app.register_blueprint(user_routes, url_prefix='/users')  # Register role assignment blueprint
-    app.register_blueprint(login.login_bp, url_prefix='/')
+    app.register_blueprint(users.user_bp, url_prefix="/users")
+    app.register_blueprint(
+        user_routes, url_prefix="/users"
+    )  # Register role assignment blueprint
+    app.register_blueprint(login.login_bp, url_prefix="/")
 
     return app

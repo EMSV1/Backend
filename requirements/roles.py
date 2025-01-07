@@ -3,8 +3,8 @@ from requirements.__init__ import db
 
 
 def create_default_roles():
-    roles = ['Super-Admin', 'Admin', 'HR', 'TA-Admin', 'IT-Admin']
-    
+    roles = ["Super-Admin", "Admin", "HR", "TA-Admin", "IT-Admin"]
+
     for role_name in roles:
         role = Role.query.filter_by(role_name=role_name).first()
         if not role:
