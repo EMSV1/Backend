@@ -10,19 +10,18 @@ if os.getenv("FLASK_ENV") == "development":
 # Create the Flask application instance using the factory function
 app = create_app()
 
+# Get CORS origins from environment variable, fallback to default origins if not defined
+allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+if allowed_origins:
+    allowed_origins = allowed_origins.split(",")  # Split into a list of origins if multiple are provided
+
 # Allow specific origins for production or localhost for development
-CORS(
-    app,
-    origins=os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:3000",
-        "https://cogs-354de766c1e7.herokuapp.com",
-    ),
-)
+CORS(app, origins=allowed_origins)
 
 # If the script is run directly, start the app
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_ENV") == "development")
+
 
 
 # backend/app.py
