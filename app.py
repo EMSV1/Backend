@@ -25,7 +25,7 @@ if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_ENV") == "development")
 
 
-# # backend/app.py
+# backend/app.py
 # from requirements.__init__ import create_app
 # from flask_cors import CORS
 
