@@ -22,7 +22,7 @@ CORS(
 # Only Admin roles can create or edit requirements
 @requirements_bp.route("/requirements", methods=["POST"])
 @jwt_required()  # Ensure the request has a valid JWT token
-@role_required(roles=["Admin"])
+@role_required(roles=["Admin", "Super-Admin"])
 def create_requirement():
     data = request.json
     new_requirement = Requirement(
@@ -43,7 +43,7 @@ def create_requirement():
 # Get all requirements (Accessible to Admin only)
 @requirements_bp.route("/requirements", methods=["GET"])
 @jwt_required()  # Ensure the request has a valid JWT token
-@role_required(roles=["Admin"])
+@role_required(roles=["Admin", "Super-Admin"])
 def get_requirements():
     requirements = Requirement.query.all()
     result = [
@@ -55,7 +55,7 @@ def get_requirements():
 # Get a specific requirement (Accessible to Admin only)
 @requirements_bp.route("/requirements/<int:id>", methods=["GET"])
 @jwt_required()  # Ensure the request has a valid JWT token
-@role_required(roles=["Admin"])
+@role_required(roles=["Admin", "Super-Admin"])
 def get_requirement(id):
     requirement = Requirement.query.get(id)
     if not requirement:
@@ -66,7 +66,7 @@ def get_requirement(id):
 # Update a requirement (Accessible to Admin only)
 @requirements_bp.route("/requirements/<int:id>", methods=["PUT"])
 @jwt_required()  # Ensure the request has a valid JWT token
-@role_required(roles=["Admin"])
+@role_required(roles=["Admin", "Super-Admin"])
 def update_requirement(id):
     data = request.json
     requirement = Requirement.query.get(id)
@@ -91,7 +91,7 @@ def update_requirement(id):
 # Delete a requirement (Accessible to Admin only)
 @requirements_bp.route("/requirements/<int:id>", methods=["DELETE"])
 @jwt_required()  # Ensure the request has a valid JWT token
-@role_required(roles=["Admin"])
+@role_required(roles=["Admin", "Super-Admin"])
 def delete_requirement(id):
     requirement = Requirement.query.get(id)
     if not requirement:

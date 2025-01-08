@@ -22,7 +22,7 @@ CORS(
 # Only HR can create or edit joining details
 @joining_bp.route("/joining", methods=["POST"])
 @jwt_required()  # Ensure that JWT is verified
-@role_required(roles=["HR"])
+@role_required(roles=["HR", "Super-Admin"])
 def create_joining():
     data = request.json
     new_joining = Joining(
@@ -44,7 +44,7 @@ def create_joining():
 # Get joining details for a specific employee (Accessible to HR only)
 @joining_bp.route("/joining/<int:id>", methods=["GET"])
 @jwt_required()  # Ensure that JWT is verified
-@role_required(roles=["HR"])
+@role_required(roles=["HR", "Super-Admin"])
 def get_joining(id):
     joining = Joining.query.get(id)
     if not joining:
@@ -69,7 +69,7 @@ def get_joining(id):
 # Get all joining details (Accessible to HR only)
 @joining_bp.route("/joining", methods=["GET"])
 @jwt_required()  # Ensure that JWT is verified
-@role_required(roles=["HR"])
+@role_required(roles=["HR", "Super-Admin"])
 def get_all_joining():
     joinings = Joining.query.all()  # Fetch all joining records
     if not joinings:
@@ -99,7 +99,7 @@ def get_all_joining():
 # Update joining details for a specific employee (Accessible to HR only)
 @joining_bp.route("/joining/<int:id>", methods=["PUT"])
 @jwt_required()  # Ensure that JWT is verified
-@role_required(roles=["HR"])
+@role_required(roles=["HR", "Super-Admin"])
 def update_joining(id):
     data = request.json
     joining = Joining.query.get(id)

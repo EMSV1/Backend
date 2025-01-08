@@ -9,7 +9,7 @@ licenses_bp = Blueprint('licenses_bp', __name__)
 # Create Software License
 @licenses_bp.route('/licenses', methods=['POST'])
 @jwt_required()
-@role_required(roles=['IT-Admin'])
+@role_required(roles=['IT-Admin', 'Super-Admin'])
 def create_license():
     data = request.get_json()
 
@@ -39,7 +39,7 @@ def create_license():
 # Get all Software Licenses (with attributes)
 @licenses_bp.route('/licenses', methods=['GET'])
 @jwt_required()
-@role_required(roles=['IT-Admin'])
+@role_required(roles=['IT-Admin', 'Super-Admin'])
 def get_all_licenses():
     employee_id = request.args.get('employee_id')
 
@@ -73,7 +73,7 @@ def get_all_licenses():
 # Get a specific Software License by ID (with attributes)
 @licenses_bp.route('/licenses/<int:license_id>', methods=['GET'])
 @jwt_required()
-@role_required(roles=['IT-Admin'])
+@role_required(roles=['IT-Admin', 'Super-Admin'])
 def get_license(license_id):
     # Fetch license and include associated attributes using joinedload
     license = SoftwareLicense.query.filter_by(license_id=license_id).options(joinedload(SoftwareLicense.dynamic_attributes)).first()
@@ -99,7 +99,7 @@ def get_license(license_id):
 # Update a Software License (update dynamic attributes)
 @licenses_bp.route('/licenses/<int:license_id>', methods=['PUT'])
 @jwt_required()
-@role_required(roles=['IT-Admin'])
+@role_required(roles=['IT-Admin', 'Super-Admin'])
 def update_license(license_id):
     data = request.get_json()
 
@@ -133,7 +133,7 @@ def update_license(license_id):
 # Delete a Software License
 @licenses_bp.route('/licenses/<int:license_id>', methods=['DELETE'])
 @jwt_required()
-@role_required(roles=['IT-Admin'])
+@role_required(roles=['IT-Admin', 'Super-Admin'])
 def delete_license(license_id):
     license = SoftwareLicense.query.filter_by(license_id=license_id).first()
 

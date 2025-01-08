@@ -22,7 +22,7 @@ CORS(
 
 @assets_bp.route("/it_assets", methods=["POST"])
 @jwt_required()
-@role_required(roles=["IT-Admin"])
+@role_required(roles=["IT-Admin", "Super-Admin"])
 def create_it_assets():
     data = request.json
     required_fields = [
@@ -48,7 +48,7 @@ def create_it_assets():
 
 @assets_bp.route("/it_assets", methods=["GET"])
 @jwt_required()
-@role_required(roles=["IT-Admin"])
+@role_required(roles=["IT-Admin", "Super-Admin"])
 def get_all_it_assets():
     assets = ITAssets.query.all()
     assets_list = [
@@ -73,7 +73,7 @@ def get_all_it_assets():
 
 @assets_bp.route("/it_assets/<int:id>", methods=["GET"])
 @jwt_required()
-@role_required(roles=["IT-Admin"])
+@role_required(roles=["IT-Admin", "Super-Admin"])
 def get_it_asset(id):
     asset = ITAssets.query.get(id)
     if not asset:
@@ -98,7 +98,7 @@ def get_it_asset(id):
 
 @assets_bp.route("/it_assets/<int:id>", methods=["PUT"])
 @jwt_required()
-@role_required(roles=["IT-Admin"])
+@role_required(roles=["IT-Admin", "Super-Admin"])
 def update_it_asset(id):
     data = request.json
     asset = ITAssets.query.get(id)
@@ -114,7 +114,7 @@ def update_it_asset(id):
 
 @assets_bp.route("/it_assets/<int:id>", methods=["DELETE"])
 @jwt_required()
-@role_required(roles=["IT-Admin"])
+@role_required(roles=["IT-Admin", "Super-Admin"])
 def delete_it_asset(id):
     asset = ITAssets.query.get(id)
     if not asset:

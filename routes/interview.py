@@ -7,7 +7,7 @@ interview_bp = Blueprint('interview_bp', __name__)
 
 # Only Admin can update interview status
 @interview_bp.route('/interview_status/<int:id>', methods=['PUT'])
-@role_required(roles=['Admin'])
+@role_required(roles=['Admin', 'Super-Admin'])
 def update_interview_status(id):
     data = request.json
     interview_status = InterviewStatus.query.get(id)
@@ -20,7 +20,7 @@ def update_interview_status(id):
 
 # Get interview status (Accessible to Admin only)
 @interview_bp.route('/interview_status/<int:id>', methods=['GET'])
-@role_required(roles=['Admin'])
+@role_required(roles=['Admin', 'Super-Admin'])
 def get_interview_status(id):
     interview_status = InterviewStatus.query.get(id)
     if not interview_status:
