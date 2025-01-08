@@ -59,7 +59,7 @@ class Requirement(db.Model):
     requirement_id = db.Column(db.Integer, primary_key=True)
     business_unit = db.Column(db.String(100))
     resource_requirement = db.Column(db.String(100))
-    job_description = db.Column(db.String(255))
+    job_description = db.Column(db.String(1000))
     resource_type = db.Column(db.String(50))
     business_title = db.Column(db.String(100))
     vector_title = db.Column(db.String(100))
@@ -118,6 +118,7 @@ class Joining(db.Model):
     employee_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
+    emp_email_id = db.Column(db.String(100))
     employee_address = db.Column(db.String(255))
     business_unit = db.Column(db.String(100))
     business_title = db.Column(db.String(100))
@@ -129,6 +130,23 @@ class Joining(db.Model):
     last_modified_date = db.Column(
         db.DateTime, default=get_current_utc_time, onupdate=get_current_utc_time
     )
+
+    def to_dict(self):
+        return {
+            "employee_id": self.employee_id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "emp_email_id": self.emp_email_id,
+            "employee_address": self.employee_address,
+            "business_unit": self.business_unit,
+            "business_title": self.business_title,
+            "resource_type": self.resource_type,
+            "contact_number": self.contact_number,
+            "reporting_manager": self.reporting_manager,
+            "employment_status": self.employment_status,
+            "created_date": self.created_date.isoformat(),
+            "last_modified_date": self.last_modified_date.isoformat(),
+        }
 
 
 class ITAssets(db.Model):
