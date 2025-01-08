@@ -58,7 +58,7 @@ def create_app():
     # app.register_blueprint(employee.employee_bp, url_prefix='/employee')
     app.register_blueprint(requirement.requirements_bp, url_prefix="/")
     app.register_blueprint(approval.approval_bp, url_prefix="/approval")
-    app.register_blueprint(interview.interview_bp, url_prefix="/interview")
+    app.register_blueprint(interview.interview_bp, url_prefix="/")
     app.register_blueprint(joining.joining_bp, url_prefix="/")
     app.register_blueprint(assets.assets_bp, url_prefix="/")
     app.register_blueprint(licenses.licenses_bp, url_prefix="/")
