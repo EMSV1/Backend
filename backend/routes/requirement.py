@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from models import Requirement, User, RequirementApproval
-from requirements.__init__ import db, mail
+from requirements.__init__ import db
 from requirements.auth import role_required
 from flask_jwt_extended import jwt_required  # Import this to require JWT validation
 from flask_cors import CORS
