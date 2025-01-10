@@ -89,8 +89,10 @@ class Requirement(db.Model):
 class RequirementApproval(db.Model):
     __tablename__ = "requirement_approval"
 
+    approval_id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=True)
+
     requirement_id = db.Column(
-        db.Integer, db.ForeignKey("requirements.requirement_id"), primary_key=True
+        db.Integer, db.ForeignKey("requirements.requirement_id"), nullable=False
     )
     approval_status = db.Column(db.String(50))
     approved_by = db.Column(db.String(100))
@@ -102,9 +104,9 @@ class RequirementApproval(db.Model):
 class InterviewStatus(db.Model):
     __tablename__ = "interview_status"
 
-    interview_id = db.Column(db.Integer, primary_key=True)
+    interview_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     requirement_id = db.Column(
-        db.Integer, db.ForeignKey("requirements.requirement_id"), primary_key=True
+        db.Integer, db.ForeignKey("requirements.requirement_id"), nullable=False
     )
     interview_status = db.Column(db.String(50))  # Pending, Hold, Approved, Rejected
     interview_round = db.Column(db.String(50))  # Preliminary, Final, HR Round

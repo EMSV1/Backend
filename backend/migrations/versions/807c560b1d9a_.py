@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 48a0541a348e
+Revision ID: 807c560b1d9a
 Revises: 
-Create Date: 2025-01-06 20:28:15.533732
+Create Date: 2025-01-11 03:16:50.133648
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '48a0541a348e'
+revision = '807c560b1d9a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,6 +37,7 @@ def upgrade():
     sa.Column('employee_id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=100), nullable=True),
     sa.Column('last_name', sa.String(length=100), nullable=True),
+    sa.Column('emp_email_id', sa.String(length=100), nullable=True),
     sa.Column('employee_address', sa.String(length=255), nullable=True),
     sa.Column('business_unit', sa.String(length=100), nullable=True),
     sa.Column('business_title', sa.String(length=100), nullable=True),
@@ -52,7 +53,7 @@ def upgrade():
     sa.Column('requirement_id', sa.Integer(), nullable=False),
     sa.Column('business_unit', sa.String(length=100), nullable=True),
     sa.Column('resource_requirement', sa.String(length=100), nullable=True),
-    sa.Column('job_description', sa.String(length=255), nullable=True),
+    sa.Column('job_description', sa.String(length=1000), nullable=True),
     sa.Column('resource_type', sa.String(length=50), nullable=True),
     sa.Column('business_title', sa.String(length=100), nullable=True),
     sa.Column('vector_title', sa.String(length=100), nullable=True),
@@ -70,20 +71,22 @@ def upgrade():
     sa.UniqueConstraint('role_name')
     )
     op.create_table('interview_status',
+    sa.Column('interview_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('requirement_id', sa.Integer(), nullable=False),
     sa.Column('interview_status', sa.String(length=50), nullable=True),
     sa.Column('interview_round', sa.String(length=50), nullable=True),
     sa.Column('last_modified_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['requirement_id'], ['requirements.requirement_id'], ),
-    sa.PrimaryKeyConstraint('requirement_id')
+    sa.PrimaryKeyConstraint('interview_id')
     )
     op.create_table('requirement_approval',
+    sa.Column('approval_id', sa.Integer(), autoincrement=True, nullable=True),
     sa.Column('requirement_id', sa.Integer(), nullable=False),
     sa.Column('approval_status', sa.String(length=50), nullable=True),
     sa.Column('approved_by', sa.String(length=100), nullable=True),
     sa.Column('last_modified_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['requirement_id'], ['requirements.requirement_id'], ),
-    sa.PrimaryKeyConstraint('requirement_id')
+    sa.PrimaryKeyConstraint('approval_id')
     )
     op.create_table('software_licenses',
     sa.Column('license_id', sa.Integer(), nullable=False),
