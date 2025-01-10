@@ -51,13 +51,13 @@ def get_joining(id):
         return jsonify({"message": "Joining not found"}), 404
     return jsonify(joining.to_dict())
 
-# Get all joining records (Accessible to HR and Super-Admin)
+# Get all joining records
 @joining_bp.route("/joining", methods=["GET"])
 @jwt_required()
 @role_required(roles=["HR", "Super-Admin"])
 def get_all_joining():
     joinings = Joining.query.all()
-    return jsonify([joi.to_dict() for joi in joinings])
+    return jsonify({"count": len(joinings), "joinings": [joi.to_dict() for joi in joinings]})
 
 # Update a specific joining record by ID (Accessible to HR and Super-Admin)
 @joining_bp.route("/joining/<int:id>", methods=["PUT"])

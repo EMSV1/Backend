@@ -52,23 +52,19 @@ def get_all_licenses():
     if not licenses:
         return jsonify({"message": "No licenses found"}), 404
 
-    result = []
-    for license in licenses:
-        license_data = {
+    result = [
+        {
             "license_id": license.license_id,
             "employee_id": license.employee_id,
             "created_date": license.created_date,
             "last_modified_date": license.last_modified_date,
             "attributes": [
-                {
-                    "attribute_name": attr.attribute_name,
-                    "attribute_value": attr.attribute_value
-                } for attr in license.dynamic_attributes
+                {"attribute_name": attr.attribute_name, "attribute_value": attr.attribute_value}
+                for attr in license.dynamic_attributes
             ]
-        }
-        result.append(license_data)
-
-    return jsonify(result), 200
+        } for license in licenses
+    ]
+    return jsonify({"count": len(licenses), "licenses": result})
 
 # Get a specific Software License by ID (with attributes)
 @licenses_bp.route('/licenses/<int:license_id>', methods=['GET'])

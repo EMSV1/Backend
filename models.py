@@ -102,6 +102,7 @@ class RequirementApproval(db.Model):
 class InterviewStatus(db.Model):
     __tablename__ = "interview_status"
 
+    interview_id = db.Column(db.Integer, primary_key=True)
     requirement_id = db.Column(
         db.Integer, db.ForeignKey("requirements.requirement_id"), primary_key=True
     )
