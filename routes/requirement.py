@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
-from models import Requirement
-from requirements.__init__ import db
+from models import Requirement, User, RequirementApproval
+from requirements.__init__ import db, mail
 from requirements.auth import role_required
 from flask_jwt_extended import jwt_required  # Import this to require JWT validation
 from flask_cors import CORS
+from flask_mail import Message
 
 requirements_bp = Blueprint("requirements_bp", __name__)
 
@@ -17,7 +18,6 @@ CORS(
     ],
     supports_credentials=True,
 )
-
 
 # Only Admin roles can create or edit requirements
 @requirements_bp.route("/requirements", methods=["POST"])
@@ -46,10 +46,8 @@ def create_requirement():
 @role_required(roles=["Admin", "Super-Admin"])
 def get_requirements():
     requirements = Requirement.query.all()
-    result = [
-        req.to_dict() for req in requirements
-    ]  # Using to_dict() for serialization
-    return jsonify(result)
+    result = [req.to_dict() for req in requirements]
+    return jsonify({"count": len(requirements), "requirements": result})
 
 
 # Get a specific requirement (Accessible to Admin only)

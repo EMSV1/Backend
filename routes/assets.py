@@ -46,6 +46,7 @@ def create_it_assets():
     return jsonify({"message": "IT asset created successfully"}), 201
 
 
+# Get all IT assets
 @assets_bp.route("/it_assets", methods=["GET"])
 @jwt_required()
 @role_required(roles=["IT-Admin", "Super-Admin"])
@@ -68,7 +69,7 @@ def get_all_it_assets():
         }
         for asset in assets
     ]
-    return jsonify(assets_list), 200
+    return jsonify({"count": len(assets), "assets": assets_list})
 
 
 @assets_bp.route("/it_assets/<int:id>", methods=["GET"])
