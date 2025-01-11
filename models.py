@@ -167,11 +167,9 @@ class ITAssets(db.Model):
     airtel_dongle = db.Column(db.String(100), nullable=False)
     id_card = db.Column(db.String(100), nullable=False)
     employment_status = db.Column(db.String(50), nullable=False)
-    created_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    created_date = db.Column(db.DateTime, default=get_current_utc_time)
     last_modified_date = db.Column(
-        db.DateTime,
-        default=db.func.current_timestamp(),
-        onupdate=db.func.current_timestamp(),
+        db.DateTime, default=get_current_utc_time, onupdate=get_current_utc_time
     )
 
     def __init__(
