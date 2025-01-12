@@ -1,12 +1,15 @@
 from flask import Blueprint, request, jsonify
-from models import InterviewStatus
+from flask_cors import CORS
+from flask_jwt_extended import jwt_required
 from requirements.__init__ import db
 from requirements.auth import role_required
-from flask_jwt_extended import jwt_required
-from flask_cors import CORS
+from models import InterviewStatus
+from datetime import datetime
 
+# Blueprint setup
 interview_bp = Blueprint('interview_bp', __name__)
 
+# CORS configuration
 CORS(
     interview_bp,
     origins=[
@@ -28,6 +31,9 @@ def create_interview_status():
         requirement_id=data['requirement_id'],
         interview_status=data['interview_status'],
         interview_round=data['interview_round'],
+        candidate_name=data['candidate_name'],
+        interviewer_name=data['interviewer_name'],
+        interview_date=datetime.fromisoformat(data['interview_date']),
     )
     db.session.add(new_interview_status)
     db.session.commit()
@@ -41,12 +47,7 @@ def get_interview_status(id):
     interview_status = InterviewStatus.query.get(id)
     if not interview_status:
         return jsonify({"message": "Interview status not found"}), 404
-    return jsonify({
-        'requirement_id': interview_status.requirement_id,
-        'interview_status': interview_status.interview_status,
-        'interview_round': interview_status.interview_round,
-        'last_modified_date': interview_status.last_modified_date.isoformat(),
-    })
+    return jsonify(interview_status.to_dict())
 
 # Get all interview statuses
 @interview_bp.route('/interview', methods=['GET'])
@@ -69,6 +70,11 @@ def update_interview_status(id):
 
     interview_status.interview_status = data.get('interview_status', interview_status.interview_status)
     interview_status.interview_round = data.get('interview_round', interview_status.interview_round)
+    interview_status.candidate_name = data.get('candidate_name', interview_status.candidate_name)
+    interview_status.interviewer_name = data.get('interviewer_name', interview_status.interviewer_name)
+    if 'interview_date' in data:
+        interview_status.interview_date = datetime.fromisoformat(data['interview_date'])
+
     db.session.commit()
     return jsonify({"message": "Interview status updated successfully"})
 
@@ -84,14 +90,18 @@ def delete_interview_status(id):
     db.session.commit()
     return jsonify({"message": "Interview status deleted successfully"})
 
-# Utility function for converting an InterviewStatus object to a dictionary
+# Add the to_dict method to the InterviewStatus class
 def to_dict(self):
     return {
+        'interview_id': self.interview_id,
         'requirement_id': self.requirement_id,
         'interview_status': self.interview_status,
         'interview_round': self.interview_round,
+        'candidate_name': self.candidate_name,
+        'interviewer_name': self.interviewer_name,
+        'interview_date': self.interview_date.isoformat() if self.interview_date else None,
         'last_modified_date': self.last_modified_date.isoformat(),
     }
 
-# Add the to_dict method to the InterviewStatus class
+# Attach the to_dict method to the InterviewStatus class
 InterviewStatus.to_dict = to_dict
