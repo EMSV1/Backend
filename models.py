@@ -104,15 +104,29 @@ class RequirementApproval(db.Model):
 class InterviewStatus(db.Model):
     __tablename__ = "interview_status"
 
-    interview_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    interview_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=True)
     requirement_id = db.Column(
         db.Integer, db.ForeignKey("requirements.requirement_id"), nullable=False
     )
     interview_status = db.Column(db.String(50))  # Pending, Hold, Approved, Rejected
     interview_round = db.Column(db.String(50))  # Preliminary, Final, HR Round
+    candidate_name = db.Column(db.String(100), nullable=True)  # New field
+    interviewer_name = db.Column(db.String(100), nullable=True)  # New field
+    interview_date = db.Column(db.DateTime, nullable=True)  # New field
     last_modified_date = db.Column(
         db.DateTime, default=get_current_utc_time, onupdate=get_current_utc_time
     )
+
+    def to_dict(self):
+        return {
+            'requirement_id': self.requirement_id,
+            'interview_status': self.interview_status,
+            'interview_round': self.interview_round,
+            'candidate_name': self.candidate_name,
+            'interviewer_name': self.interviewer_name,
+            'interview_date': self.interview_date.isoformat() if self.interview_date else None,
+            'last_modified_date': self.last_modified_date.isoformat(),
+        }
 
 
 class Joining(db.Model):
