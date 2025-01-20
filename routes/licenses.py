@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+import pandas as pd
+from io import BytesIO
+from flask import Blueprint, request, jsonify, send_file
 from flask_jwt_extended import jwt_required
 from models import db, SoftwareLicense, LicenseAttribute, Joining
 from requirements.auth import role_required
@@ -144,3 +146,93 @@ def delete_license(license_id):
     db.session.commit()
 
     return jsonify({"message": "Software license deleted successfully"}), 200
+
+# Export All Licenses to Excel
+@licenses_bp.route('/licenses/export', methods=['GET'])
+@jwt_required()
+@role_required(roles=['IT-Admin', 'Super-Admin'])
+def export_all_licenses():
+    # Fetch all licenses with their attributes using joinedload
+    licenses = SoftwareLicense.query.options(joinedload(SoftwareLicense.dynamic_attributes)).all()
+
+    # If no licenses found
+    if not licenses:
+        return jsonify({"message": "No licenses found"}), 404
+
+    # Prepare data for export
+    data = []
+    for license in licenses:
+        for attr in license.dynamic_attributes:
+            data.append({
+                "license_id": license.license_id,
+                "employee_id": license.employee_id,
+                "created_date": license.created_date,
+                "last_modified_date": license.last_modified_date,
+                "attribute_name": attr.attribute_name,
+                "attribute_value": attr.attribute_value
+            })
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a BytesIO object to store the Excel file in memory
+    excel_file = BytesIO()
+
+    # Write the DataFrame to the Excel file using openpyxl engine
+    with pd.ExcelWriter(excel_file, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="Licenses")
+
+    # Seek to the beginning of the file so it can be read
+    excel_file.seek(0)
+
+    # Send the file as a response with an appropriate content type and filename
+    return send_file(
+        excel_file,
+        as_attachment=True,
+        download_name="licenses.xlsx",  # You can modify the filename as needed
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+# Export a Single License by ID to Excel
+@licenses_bp.route('/licenses/<int:license_id>/export', methods=['GET'])
+@jwt_required()
+@role_required(roles=['IT-Admin', 'Super-Admin'])
+def export_single_license(license_id):
+    # Fetch the license by its ID and include associated attributes
+    license = SoftwareLicense.query.filter_by(license_id=license_id).options(joinedload(SoftwareLicense.dynamic_attributes)).first()
+
+    if not license:
+        return jsonify({"message": "License not found"}), 404
+
+    # Prepare data for export
+    data = []
+    for attr in license.dynamic_attributes:
+        data.append({
+            "license_id": license.license_id,
+            "employee_id": license.employee_id,
+            "created_date": license.created_date,
+            "last_modified_date": license.last_modified_date,
+            "attribute_name": attr.attribute_name,
+            "attribute_value": attr.attribute_value
+        })
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a BytesIO object to store the Excel file in memory
+    excel_file = BytesIO()
+
+    # Write the DataFrame to the Excel file using openpyxl engine
+    with pd.ExcelWriter(excel_file, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="License")
+
+    # Seek to the beginning of the file so it can be read
+    excel_file.seek(0)
+
+    # Send the file as a response with an appropriate content type and filename
+    return send_file(
+        excel_file,
+        as_attachment=True,
+        download_name=f"license_{license_id}.xlsx",  # Dynamically naming the file based on license_id
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )

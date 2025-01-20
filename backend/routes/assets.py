@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+import pandas as pd
+from io import BytesIO
+from flask import Blueprint, request, jsonify, send_file
 from flask_jwt_extended import jwt_required
 from models import ITAssets
 from requirements.__init__ import db
@@ -124,3 +126,102 @@ def delete_it_asset(id):
     db.session.delete(asset)
     db.session.commit()
     return jsonify({"message": "IT asset deleted successfully"}), 200
+
+# Export all IT assets to Excel
+@assets_bp.route('/it_assets/export', methods=['GET'])
+@jwt_required()
+@role_required(roles=["IT-Admin", "Super-Admin"])
+def export_all_it_assets():
+    # Fetch all IT assets
+    assets = ITAssets.query.all()
+
+    # If no IT assets found
+    if not assets:
+        return jsonify({"message": "No IT assets found"}), 404
+
+    # Prepare data for export
+    data = []
+    for asset in assets:
+        data.append({
+            "asset_id": asset.asset_id,
+            "employee_id": asset.employee_id,
+            "laptop": asset.laptop,
+            "monitor": asset.monitor,
+            "wired_keyboard": asset.wired_keyboard,
+            "wired_mouse": asset.wired_mouse,
+            "wireless_mouse": asset.wireless_mouse,
+            "airtel_dongle": asset.airtel_dongle,
+            "id_card": asset.id_card,
+            "employment_status": asset.employment_status,
+            "created_date": asset.created_date,
+            "last_modified_date": asset.last_modified_date
+        })
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a BytesIO object to store the Excel file in memory
+    excel_file = BytesIO()
+
+    # Write the DataFrame to the Excel file using openpyxl engine
+    with pd.ExcelWriter(excel_file, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="IT Assets")
+
+    # Seek to the beginning of the file so it can be read
+    excel_file.seek(0)
+
+    # Send the file as a response with an appropriate content type and filename
+    return send_file(
+        excel_file,
+        as_attachment=True,
+        download_name="it_assets.xlsx",  # You can modify the filename as needed
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+# Export a specific IT asset by ID to Excel
+@assets_bp.route('/it_assets/<int:id>/export', methods=['GET'])
+@jwt_required()
+@role_required(roles=["IT-Admin", "Super-Admin"])
+def export_single_it_asset(id):
+    # Fetch the IT asset by its ID
+    asset = ITAssets.query.get(id)
+
+    if not asset:
+        return jsonify({"message": "IT asset not found"}), 404
+
+    # Prepare data for export
+    data = [{
+        "asset_id": asset.asset_id,
+        "employee_id": asset.employee_id,
+        "laptop": asset.laptop,
+        "monitor": asset.monitor,
+        "wired_keyboard": asset.wired_keyboard,
+        "wired_mouse": asset.wired_mouse,
+        "wireless_mouse": asset.wireless_mouse,
+        "airtel_dongle": asset.airtel_dongle,
+        "id_card": asset.id_card,
+        "employment_status": asset.employment_status,
+        "created_date": asset.created_date,
+        "last_modified_date": asset.last_modified_date
+    }]
+
+    # Convert the data into a pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a BytesIO object to store the Excel file in memory
+    excel_file = BytesIO()
+
+    # Write the DataFrame to the Excel file using openpyxl engine
+    with pd.ExcelWriter(excel_file, engine="openpyxl") as writer:
+        df.to_excel(writer, index=False, sheet_name="IT Asset")
+
+    # Seek to the beginning of the file so it can be read
+    excel_file.seek(0)
+
+    # Send the file as a response with an appropriate content type and filename
+    return send_file(
+        excel_file,
+        as_attachment=True,
+        download_name=f"it_asset_{id}.xlsx",  # Dynamically naming the file based on asset ID
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
