@@ -5,8 +5,21 @@ from flask_jwt_extended import jwt_required
 from models import db, SoftwareLicense, LicenseAttribute, Joining
 from requirements.auth import role_required
 from sqlalchemy.orm import joinedload  # Importing joinedload to eagerly load relationships
+from flask_cors import CORS
 
 licenses_bp = Blueprint('licenses_bp', __name__)
+
+CORS(
+    licenses_bp,
+    origins=[
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://127.0.0.1:3000",
+        "https://cogs-354de766c1e7.herokuapp.com",
+        "https://www.v97-cems.com"
+    ],
+    supports_credentials=True,
+)
 
 # Create Software License
 @licenses_bp.route('/licenses', methods=['POST'])
