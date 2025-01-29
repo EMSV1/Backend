@@ -11,7 +11,7 @@ if os.getenv("FLASK_ENV") == "development":
 app = create_app()
 
 # Get CORS origins from environment variable, fallback to default origins if not defined
-allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:8080")
+allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:8080", "https://www.v97-cems.com")
 if allowed_origins:
     allowed_origins = allowed_origins.split(",")  # Split into a list of origins if multiple are provided
 

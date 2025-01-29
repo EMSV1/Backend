@@ -18,6 +18,7 @@ CORS(
                 "http://127.0.0.1:8080",
                 "http://127.0.0.1:3000",
                 "https://cogs-354de766c1e7.herokuapp.com",
+                "https://www.v97-cems.com"
             ],
             "methods": ["POST", "OPTIONS"],
             "allow_headers": ["Content-Type"],
