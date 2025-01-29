@@ -31,7 +31,7 @@ def create_app():
     mail.init_app(app)
 
     # Initialize CORS (Allow specific origins for development)
-    CORS(app, origins=["http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000"], supports_credentials=True)
+    CORS(app, origins=["http://localhost:3000", "http://localhost:8080", "http://127.0.0.1:3000", "https://www.v97-cems.com"], supports_credentials=True)
 
     # Register blueprints (routes)
     from routes import  requirement, approval, interview, joining, assets, licenses, login, users
